@@ -11,9 +11,17 @@ class QuizInterface():
 
         self.window = Tk()
         self.window.title("Quiz App")
-        self.window.config(bg=THEME_COLOR, padx=20, pady=20)
+        self.window.config(
+            bg=THEME_COLOR,
+            padx=20,
+            pady=20
+        )
 
-        self.score_label = Label(bg=THEME_COLOR, fg="white", text="Score: 0")
+        self.score_label = Label(
+            bg=THEME_COLOR,
+            fg="white",
+            text="Score: 0"
+        )
         self.score_label.grid(column=1, row=0)
 
         self.canvas = Canvas(
@@ -30,16 +38,27 @@ class QuizInterface():
             fill="black",
             font=("Arial", 20, "italic")
         )
-        self.canvas.grid(column=0, row=1, columnspan=2, pady=50)
+        self.canvas.grid(
+            column=0,
+            row=1,
+            columnspan=2,
+            pady=50
+        )
 
         true_img = PhotoImage(file="images/true.png")
         self.true_button = Button(
-            image=true_img, highlightthickness=0, command=self.answer_true)
+            image=true_img,
+            highlightthickness=0,
+            command=self.answer_true
+        )
         self.true_button.grid(column=0, row=2)
 
         false_img = PhotoImage(file="images/false.png")
         self.false_button = Button(
-            image=false_img, highlightthickness=0, command=self.answer_false)
+            image=false_img,
+            highlightthickness=0,
+            command=self.answer_false
+        )
         self.false_button.grid(column=1, row=2)
 
         self.get_next_question()
@@ -47,9 +66,14 @@ class QuizInterface():
         self.window.mainloop()
 
     def get_next_question(self):
-        self.canvas.config(bg="white")
-        question = self.quiz.next_question()
-        self.canvas.itemconfig(self.quiz_question, text=question)
+        if self.quiz.still_has_questions():
+            self.canvas.config(bg="white")
+            self.score_label.config(text=f"Score: {self.quiz.score}")
+            question = self.quiz.next_question()
+            self.canvas.itemconfig(self.quiz_question, text=question)
+        else:
+            self.canvas.itemconfig(
+                self.quiz_question, text="That's it. That's all of your questions.")
 
     def answer_true(self):
         right_or_wrong = self.quiz.check_answer("True")
@@ -62,7 +86,6 @@ class QuizInterface():
     def user_feedback(self, right_or_wrong: bool):
         if right_or_wrong == True:
             self.canvas.config(bg="green")
-            self.window.after(1000, self.get_next_question)
         else:
             self.canvas.config(bg="red")
-            self.window.after(1000, self.get_next_question)
+        self.window.after(1000, self.get_next_question)
